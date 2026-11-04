@@ -10,9 +10,14 @@ TOKEN_URL = "https://id.kick.com/oauth/token"
 
 def request(url, data=None, headers=None):
     req = urllib.request.Request(url, data=data, headers=headers or {})
-    with urllib.request.urlopen(req, timeout=30) as response:
-        return json.loads(response.read().decode())
-
+    try:
+        with urllib.request.urlopen(req, timeout=30) as response:
+            return json.loads(response.read().decode())
+    except urllib.error.HTTPError as e:
+        print("CHYBA HTTP:", e.code)
+        print("ADRESA:", url)
+        print("ODPOVED KICKU:", e.read().decode(errors="replace"))
+        raise
 client_id = os.environ["KICK_CLIENT_ID"]
 client_secret = os.environ["KICK_CLIENT_SECRET"]
 refresh_token = os.environ["KICK_REFRESH_TOKEN"]
