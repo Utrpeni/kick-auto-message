@@ -1,0 +1,31 @@
+
+name: Kick Bodiky
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Stahnout soubory
+        uses: actions/checkout@v4
+
+      - name: Pripravit Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Odeslat bodiky
+        env:
+          KICK_CLIENT_ID: ${{ secrets.KICK_CLIENT_ID }}
+          KICK_CLIENT_SECRET: ${{ secrets.KICK_CLIENT_SECRET }}
+          KICK_REFRESH_TOKEN: ${{ secrets.KICK_REFRESH_TOKEN }}
+        run: python send.py
